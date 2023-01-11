@@ -1,0 +1,58 @@
+clc;
+clear;
+a = 3;
+b = 2;
+c = 3;
+d = 1;
+M_f = 2.14 + c/20;
+M_r = 5.91 - b/10;
+M_c = 1.74;
+H_f = 0.18;
+H_r = 0.161;
+H_c = 0.098;
+L_F = 0.133;
+L_R = 0.308 + (a - d)/100;
+L_Ff = 0.05;
+L_r = 0.128;
+L_c = 0.259;
+J_x = 0.5 + (c - d)/100;
+mu_x = 3.33 - b/20 + a*c/60;
+angle_alpha = 15.5 - a/3 + b/2;
+angle_beta = 27.5 - d/2;
+angle_gamma = 11.5 + (a - c)/(b + d + 3);
+angle_delta = 60 + (a - b)*c/10;
+g = 9.8;
+den = M_f * H_f^2 + M_r * H_r^2 + M_c * H_c^2 + J_x;
+a_51 = -(M_c*g/den);
+a_52 = ((M_f*H_f + M_r*H_r + M_c*H_c)*g)/den;
+a_53 = ((M_r*L_r*L_F + M_c*L_c*L_F + M_f*L_Ff*L_R)*g)/((L_R + L_F)*den);
+a_54 = -(M_c*H_c*angle_alpha)/den;
+a_55 = -(mu_x/den);
+a_56 = (M_f*H_f*L_Ff*angle_gamma)/den;
+b_51 = (M_c*H_c*angle_beta)/den;
+b_52 = -(M_f*H_f*L_Ff*angle_delta)/den;
+A = [0, 0, 0, 1, 0, 0; 
+     0, 0, 0, 0, 1, 0; 
+     0, 0, 0, 0, 0, 1;
+     0, 6.5, -10, -angle_alpha, 0, 0;
+     a_51, a_52, a_53, a_54, a_55, a_56;
+     5, -3.6, 0, 0, 0, -angle_gamma];
+B = [0, 0;
+     0, 0;
+     0, 0;
+     angle_beta, 11.2;
+     b_51, b_52;
+     40, angle_beta];
+C = [1, 0, 0, 0, 0, 0;
+     0, 1, 0, 0, 0, 0;
+     0, 0, 1, 0, 0, 0];
+x_0 = [0.2, -0.1, 0.15, -1, 0.8, 0]';
+
+%specification
+anti_three_omega_n_minimum = 4/5;
+syms anti_three
+f(anti_three) = exp(-pi*anti_three/((1-anti_three^2)^(1/2))) - 0.1;
+anti_three = solve(f(anti_three), anti_three);
+anti_three = vpa(anti_three);
+anti_three_minimum = anti_three(1);
+
